@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/adminStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Remove modal backdrop styles */
+        .modal-backdrop {
+            display: none;
+        }
+        
+        .modal {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        /* Ensure modal content is above backdrop */
+        .modal-dialog {
+            position: relative;
+            z-index: 1055 !important;
+        }
+        
+        .modal-content {
+            position: relative;
+            z-index: 1056 !important;
+        }
+        
+        /* Make form inputs selectable */
+        .modal-body input,
+        .modal-body textarea {
+            position: relative;
+            z-index: 1057 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar" style="width: 250px;">
+            <div class="p-3">
+                <div class="logo">
+                    <% if (Logo && Logo.length > 0) { %>
+                        <img src="<%= Logo[0].image %>" alt="<%= Logo[0].title %>">
+                    <% } else { %>
+                        <img src="/images/logo.png" alt="Default Logo">
+                    <% } %>
+                </div>
+                <h5 class="text-center mb-4">Admin Panel</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin-dashboard">
+                            Projects Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin-logo">
+                            Logo Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin-blogs">
+                            Blogs Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin-testimonials">
+                            Testimonials Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin-clients">
+                            Clients Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg mb-4">
+                <div class="container-fluid">
+                    <div class="ms-auto">
+                        <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Testimonials Management</h2>
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        Add New Testimonial
+                    </button>
+                </div>
+
+                <!-- Testimonials List -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% Testimonial.forEach(testimonial => { %>
+                                <tr>
+                                    <td>
+                                        <% if (testimonial.image) { %>
+                                            <img src="<%= testimonial.image %>" alt="<%= testimonial.title %>" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <% } else { %>
+                                            No Image
+                                        <% } %>
+                                    </td>
+                                    <td><%= testimonial.title %></td>
+                                    <td><%= testimonial.description %></td>
+                                    <td>
+                                        <button class="btn btn-sm <%= testimonial.listed ? 'btn-success' : 'btn-secondary' %>" onclick="toggleTestimonialStatus('<%= testimonial._id %>')">
+                                            <%= testimonial.listed ? 'Listed' : 'Unlisted' %>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editTestimonial('<%= testimonial._id %>', '<%= testimonial.title %>', '<%= testimonial.description %>', <%= testimonial.listed %>)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteTestimonial('<%= testimonial._id %>')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Testimonial Modal -->
+    <div class="modal" id="addTestimonialModal" tabindex="-1" aria-labelledby="addTestimonialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTestimonialModalLabel">Add New Testimonial</h5>
+                    <button type="button" class="btn-close" onclick="closeAddModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTestimonialForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Testimonial</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Testimonial Modal -->
+    <div class="modal" id="editTestimonialModal" tabindex="-1" aria-labelledby="editTestimonialModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTestimonialModalLabel">Edit Testimonial</h5>
+                    <button type="button" class="btn-close" onclick="closeEditModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTestimonialForm">
+                        <input type="hidden" name="testimonialId" id="editTestimonialId">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" id="editTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" id="editDescription" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Testimonial</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Modal functions
+        function openAddModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addTestimonialModal'));
+            modal.show();
+        }
+
+        function closeAddModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTestimonialModal'));
+            modal.hide();
+        }
+
+        function closeEditModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editTestimonialModal'));
+            modal.hide();
+        }
+
+        // Add Testimonial
+        document.getElementById('addTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/create-testimonials', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeAddModal();
+                    location.reload();
+                } else {
+                    alert('Error adding testimonial');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Edit Testimonial
+        function editTestimonial(id, title, description, listed) {
+            document.getElementById('editTestimonialId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editDescription').value = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('editTestimonialModal'));
+            modal.show();
+        }
+
+        document.getElementById('editTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const id = document.getElementById('editTestimonialId').value;
+
+            try {
+                const response = await fetch(`/edit-testimonials/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeEditModal();
+                    location.reload();
+                } else {
+                    alert('Error updating testimonial');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Toggle Testimonial Status
+        async function toggleTestimonialStatus(id) {
+            try {
+                const response = await fetch(`/toggle-listing-testimonials/${id}`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error toggling testimonial status');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Delete Testimonial
+        async function deleteTestimonial(id) {
+            if (confirm('Are you sure you want to delete this testimonial?')) {
+                try {
+                    const response = await fetch(`/delete-testimonials/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting testimonial');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

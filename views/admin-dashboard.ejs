@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/adminStyle.css">
+    <style>
+        /* Remove modal backdrop styles */
+        .modal-backdrop {
+            display: none;
+        }
+        
+        .modal {
+            background: rgba(0,0,0,0.5);
+        }
+        
+        /* Ensure modal content is above backdrop */
+        .modal-dialog {
+            position: relative;
+            z-index: 1055 !important;
+        }
+        
+        .modal-content {
+            position: relative;
+            z-index: 1056 !important;
+        }
+        
+        /* Make form inputs selectable */
+        .modal-body input,
+        .modal-body textarea {
+            position: relative;
+            z-index: 1057 !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" style="width: 250px;">
+        <div class="p-3">
+            <div class="logo">
+                <% if (Logo && Logo.length > 0) { %>
+                    <img src="<%= Logo[0].image %>" alt="<%= Logo[0].title %>">
+                <% } else { %>
+                    <img src="/images/logo.png" alt="Default Logo">
+                <% } %>
+            </div>
+            <h5 class="text-center mb-4">Admin Panel</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin-dashboard">
+                        Projects Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-logo">
+                        Logo Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-blogs">
+                        Blogs Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-testimonials">
+                        Testimonials Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-clients">
+                        Clients Management
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container-fluid">
+                <div class="ms-auto">
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Projects Management</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createProjectModal">
+                    Add New Project
+                </button>
+            </div>
+
+            <!-- Projects List -->
+            <div class="table-responsive">
+                <table class="table table-striped" id="projectsTable">
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% projects.forEach(project => { %>
+                            <tr style="text-align: center; align-items: center;">
+                                <td class="align-middle">
+                                    <% if (project.image) { %>
+                                        <img src="<%= project.image %>" alt="<%= project.title %>" style="width: 50px; height: 50px; object-fit: cover; display: block; margin: 0 auto;">
+                                    <% } else { %>
+                                        No image
+                                    <% } %>
+                                </td>
+                                <td class="align-middle"><%= project.title %></td>
+                                <td class="align-middle"><%= new Date(project.date).toLocaleDateString() %></td>
+                                <td class="align-middle"><%= project.category %></td>
+                                <td class="align-middle">
+                                    <button class="btn btn-sm <%= project.listed ? 'btn-success' : 'btn-secondary' %>"
+                                            onclick="toggleProjectStatus('<%= project._id %>')">
+                                        <%= project.listed ? 'Listed' : 'Unlisted' %>
+                                    </button>
+                                </td>
+                                <td class="align-middle">
+                                    <button class="btn btn-sm btn-primary" onclick="editProject('<%= project._id %>')">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteProject('<%= project._id %>')">Delete</button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Create Project Modal -->
+            <div class="modal fade" id="createProjectModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Create New Project</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="createProjectForm" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label class="form-label">Image</label>
+                                    <input type="file" class="form-control" name="image" accept="image/*">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" name="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" name="date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Live Link</label>
+                                    <input type="url" class="form-control" name="liveLink">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" class="form-control" name="category" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Create Project</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Project Modal -->
+            <div class="modal fade" id="editProjectModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Project</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editProjectForm" enctype="multipart/form-data">
+                                <input type="hidden" name="projectId">
+                                <div class="mb-3">
+                                    <label class="form-label">Image</label>
+                                    <input type="file" class="form-control" name="image" accept="image/*">
+                                    <div id="currentImage" class="mt-2"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" name="title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" name="date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Live Link</label>
+                                    <input type="url" class="form-control" name="liveLink">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" class="form-control" name="category" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Project</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('btn', 'btn-dark', 'd-md-none');
+        toggleBtn.innerHTML = '☰';
+        toggleBtn.style.position = 'fixed';
+        toggleBtn.style.top = '10px';
+        toggleBtn.style.left = '10px';
+        toggleBtn.style.zIndex = '1000';
+        
+        document.body.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Create project form submission
+        document.getElementById('createProjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/create-project', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('createProjectModal')).hide();
+                    e.target.reset();
+                    window.location.reload();
+                } else {
+                    alert('Error creating project');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating project');
+            }
+        });
+
+        // Edit project form submission
+        document.getElementById('editProjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const projectId = formData.get('projectId');
+            
+            try {
+                const response = await fetch(`/edit-project/${projectId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('editProjectModal')).hide();
+                    window.location.reload();
+                } else {
+                    alert('Error updating project');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating project');
+            }
+        });
+    });
+
+    // Edit project function
+    async function editProject(id) {
+        try {
+            const response = await fetch(`/edit-project/${id}`, {
+                method: 'PUT'  // Changed to GET to fetch project data
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Response is not JSON');
+            }
+            
+            const { project } = await response.json();  // Destructure to get project from response
+            
+            const form = document.getElementById('editProjectForm');
+            form.querySelector('[name="projectId"]').value = project._id;
+            form.querySelector('[name="title"]').value = project.title;
+            form.querySelector('[name="date"]').value = project.date ? project.date.split('T')[0] : '';
+            form.querySelector('[name="description"]').value = project.description;
+            form.querySelector('[name="liveLink"]').value = project.liveLink || '';
+            form.querySelector('[name="category"]').value = project.category;
+            
+            // Show current image if it exists
+            const currentImageDiv = form.querySelector('#currentImage');
+            if (project.image) {
+                currentImageDiv.innerHTML = `<img src="${project.image}" alt="Current image" style="max-width: 200px;">`;
+            } else {
+                currentImageDiv.innerHTML = 'No current image';
+            }
+            
+            new bootstrap.Modal(document.getElementById('editProjectModal')).show();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error loading project details');
+        }
+    }
+
+    // Delete project function
+    async function deleteProject(id) {
+        if (confirm('Are you sure you want to delete this project?')) {
+            try {
+                const response = await fetch(`/delete-project/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting project');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting project');
+            }
+        }
+    }
+
+    // Toggle project status function
+    async function toggleProjectStatus(id) {
+        try {
+            const response = await fetch(`/toggle-list-project/${id}`, {
+                method: 'PATCH'
+            });
+            
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Error toggling project status');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error toggling project status');
+        }
+    }
+</script>
+
+</body>
+</html>

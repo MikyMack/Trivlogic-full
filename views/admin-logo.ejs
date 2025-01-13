@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/adminStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" style="width: 250px;">
+        <div class="p-3">
+            <div class="logo">
+                <% if (Logo && Logo.length > 0) { %>
+                    <img src="<%= Logo[0].image %>" alt="<%= Logo[0].title %>">
+                <% } else { %>
+                    <img src="/images/logo.png" alt="Default Logo">
+                <% } %>
+            </div>
+            <h5 class="text-center mb-4">Admin Panel</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-dashboard">
+                        Projects Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin-logo">
+                        Logo Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-blogs">
+                        Blogs Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-testimonials">
+                        Testimonials Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-clients">
+                        Clients Management
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container-fluid">
+                <div class="ms-auto">
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Logo Management</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    Add New Logo
+                </button>
+            </div>
+
+            <!-- Logo Grid -->
+            <div class="logo-grid">
+                <% Logo.forEach(logo => { %>
+                    <div class="logo-card <%= logo.listed ? 'listed' : 'unlisted' %>">
+                        <img src="<%= logo.image %>" alt="<%= logo.title %>">
+                        <h3><%= logo.title %></h3>
+                        <div class="logo-actions">
+                            <button onclick="editLogo('<%= logo._id %>', '<%= logo.title %>', '<%= logo.image %>', <%= logo.listed %>)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="toggleLogoStatus('<%= logo._id %>', <%= logo.listed %>)">
+                                <i class="fas fa-<%= logo.listed ? 'eye-slash' : 'eye' %>"></i>
+                            </button>
+                            <button onclick="deleteLogo('<%= logo._id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Logo Modal -->
+<div id="addLogoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>Add New Logo</h2>
+        <form id="addLogoForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            <button type="submit">Add Logo</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Logo Modal -->
+<div id="editLogoModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Logo</h2>
+        <form id="editLogoForm" enctype="multipart/form-data">
+            <input type="hidden" id="editLogoId">
+            <div class="form-group">
+                <label for="editTitle">Title:</label>
+                <input type="text" id="editTitle" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="editImage">New Image (optional):</label>
+                <input type="file" id="editImage" name="image" accept="image/*">
+            </div>
+            <div class="current-image">
+                <p>Current Image:</p>
+                <img id="currentLogoImage" src="" alt="Current Logo">
+            </div>
+            <button type="submit">Update Logo</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('btn', 'btn-dark', 'd-md-none');
+        toggleBtn.innerHTML = '☰';
+        toggleBtn.style.position = 'fixed';
+        toggleBtn.style.top = '10px';
+        toggleBtn.style.left = '10px';
+        toggleBtn.style.zIndex = '1000';
+        
+        document.body.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    });
+
+    // Modal functions
+    function openAddModal() {
+        document.getElementById('addLogoModal').style.display = 'block';
+    }
+
+    function closeAddModal() {
+        document.getElementById('addLogoModal').style.display = 'none';
+    }
+
+    function openEditModal() {
+        document.getElementById('editLogoModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editLogoModal').style.display = 'none';
+    }
+
+    // Logo CRUD Operations
+    async function addLogo(formData) {
+        try {
+            const response = await fetch('/create-logo', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding logo');
+        }
+    }
+
+    async function editLogo(id, title, image, listed) {
+        document.getElementById('editLogoId').value = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('currentLogoImage').src = image;
+        openEditModal();
+    }
+
+    async function updateLogo(id, formData) {
+        try {
+            const response = await fetch(`/edit-logo/${id}`, {
+                method: 'PUT',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating logo');
+        }
+    }
+
+    async function deleteLogo(id) {
+        if (confirm('Are you sure you want to delete this logo?')) {
+            try {
+                const response = await fetch(`/delete-logo/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting logo');
+            }
+        }
+    }
+
+    async function toggleLogoStatus(id, currentStatus) {
+        try {
+            const response = await fetch(`/toggle-logo/${id}`, {
+                method: 'PUT'
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error toggling logo status');
+        }
+    }
+
+    // Form Submissions
+    document.getElementById('addLogoForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        await addLogo(formData);
+    });
+
+    document.getElementById('editLogoForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editLogoId').value;
+        const formData = new FormData(e.target);
+        await updateLogo(id, formData);
+    });
+</script>
+</body>
+</html>

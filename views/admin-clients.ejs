@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/adminStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" style="width: 250px;">
+        <div class="p-3">
+            <div class="logo">
+                <% if (Logo && Logo.length > 0) { %>
+                    <img src="<%= Logo[0].image %>" alt="<%= Logo[0].title %>">
+                <% } else { %>
+                    <img src="/images/logo.png" alt="Default Logo">
+                <% } %>
+            </div>
+            <h5 class="text-center mb-4">Admin Panel</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-dashboard">
+                        Projects Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-logo">
+                        Logo Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-blogs">
+                        Blogs Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-testimonials">
+                        Testimonials Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin-clients">
+                        Clients Management
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container-fluid">
+                <div class="ms-auto">
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Clients Management</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    Add New Client
+                </button>
+            </div>
+
+            <!-- Client Grid -->
+            <div class="client-grid">
+                <% Client.forEach(client => { %>
+                    <div class="client-card">
+                        <img src="<%= client.image %>" alt="<%= client.title %>">
+                        <h3><%= client.title %></h3>
+                        <div class="client-actions">
+                            <button onclick="editClient('<%= client._id %>', '<%= client.title %>', '<%= client.image %>', <%= client.listed %>)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteClient('<%= client._id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button onclick="toggleClientListing('<%= client._id %>')" class="<%= client.listed ? 'listed' : 'unlisted' %>">
+                                <i class="fas fa-<%= client.listed ? 'eye' : 'eye-slash' %>"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Client Modal -->
+<div id="addClientModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>Add New Client</h2>
+        <form id="addClientForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            <button type="submit">Add Client</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Client Modal -->
+<div id="editClientModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Client</h2>
+        <form id="editClientForm" enctype="multipart/form-data">
+            <input type="hidden" id="editClientId">
+            <div class="form-group">
+                <label for="editTitle">Title:</label>
+                <input type="text" id="editTitle" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="editImage">New Image (optional):</label>
+                <input type="file" id="editImage" name="image" accept="image/*">
+            </div>
+            <div class="current-image">
+                <p>Current Image:</p>
+                <img id="currentClientImage" src="" alt="Current Client Image">
+            </div>
+            <button type="submit">Update Client</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('btn', 'btn-dark', 'd-md-none');
+        toggleBtn.innerHTML = '☰';
+        toggleBtn.style.position = 'fixed';
+        toggleBtn.style.top = '10px';
+        toggleBtn.style.left = '10px';
+        toggleBtn.style.zIndex = '1000';
+        
+        document.body.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    });
+
+    // Modal functions
+    function openAddModal() {
+        document.getElementById('addClientModal').style.display = 'block';
+    }
+
+    function closeAddModal() {
+        document.getElementById('addClientModal').style.display = 'none';
+        document.getElementById('addClientForm').reset();
+    }
+
+    function openEditModal() {
+        document.getElementById('editClientModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editClientModal').style.display = 'none';
+        document.getElementById('editClientForm').reset();
+    }
+
+    // Client CRUD Operations
+    async function addClient(formData) {
+        try {
+            const response = await fetch('/create-clients', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                closeAddModal();
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding client');
+        }
+    }
+
+    async function editClient(id, title, image, listed) {
+        document.getElementById('editClientId').value = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('currentClientImage').src = image;
+        openEditModal();
+    }
+
+    async function updateClient(id, formData) {
+        try {
+            const response = await fetch(`/edit-clients/${id}`, {
+                method: 'PUT',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                closeEditModal();
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating client');
+        }
+    }
+
+    async function deleteClient(id) {
+        if (confirm('Are you sure you want to delete this client?')) {
+            try {
+                const response = await fetch(`/delete-clients/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting client');
+            }
+        }
+    }
+
+    async function toggleClientListing(id) {
+        try {
+            const response = await fetch(`/toggle-listed-clients/${id}`, {
+                method: 'PUT'
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error toggling client listing status');
+        }
+    }
+
+    // Form Submissions
+    document.getElementById('addClientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        await addClient(formData);
+    });
+
+    document.getElementById('editClientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editClientId').value;
+        const formData = new FormData(e.target);
+        await updateClient(id, formData);
+    });
+</script>
+</body>
+</html>

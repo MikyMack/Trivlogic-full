@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/adminStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" style="width: 250px;">
+        <div class="p-3">
+            <div class="logo">
+                <% if (Logo && Logo.length > 0) { %>
+                    <img src="<%= Logo[0].image %>" alt="<%= Logo[0].title %>">
+                <% } else { %>
+                    <img src="/images/logo.png" alt="Default Logo">
+                <% } %>
+            </div>
+            <h5 class="text-center mb-4">Admin Panel</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-dashboard">
+                        Projects Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-logo">
+                        Logo Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin-blogs">
+                        Blogs Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-testimonials">
+                        Testimonials Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-clients">
+                        Clients Management
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg mb-4">
+            <div class="container-fluid">
+                <div class="ms-auto">
+                    <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Blogs Management</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    Add New Blog
+                </button>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="blog-grid">
+                <% Blog.forEach(blog => { %>
+                    <div class="blog-card">
+                        <img src="<%= blog.image %>" alt="<%= blog.title %>">
+                        <h3><%= blog.title %></h3>
+                        <p><%= blog.description %></p>
+                        <p>Author: <%= blog.authorName %></p>
+                        <p>Industry: <%= blog.industry %></p>
+                        <p>Date: <%= new Date(blog.date).toLocaleDateString() %></p>
+                        <div class="blog-actions">
+                            <button onclick="editBlog('<%= blog._id %>', '<%= blog.title %>', '<%= blog.description %>', '<%= blog.image %>', '<%= blog.authorName %>', '<%= blog.industry %>', <%= blog.listed %>)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteBlog('<%= blog._id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button onclick="toggleBlogListing('<%= blog._id %>')" class="<%= blog.listed ? 'listed' : 'unlisted' %>">
+                                <i class="fas fa-<%= blog.listed ? 'eye' : 'eye-slash' %>"></i>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Blog Modal -->
+<div id="addBlogModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>Add New Blog</h2>
+        <form id="addBlogForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="authorName">Author Name:</label>
+                <input type="text" id="authorName" name="authorName" required>
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry:</label>
+                <input type="text" id="industry" name="industry">
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            <button type="submit">Add Blog</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Blog Modal -->
+<div id="editBlogModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Blog</h2>
+        <form id="editBlogForm" enctype="multipart/form-data">
+            <input type="hidden" id="editBlogId">
+            <div class="form-group">
+                <label for="editTitle">Title:</label>
+                <input type="text" id="editTitle" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="editDescription">Description:</label>
+                <textarea id="editDescription" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editAuthorName">Author Name:</label>
+                <input type="text" id="editAuthorName" name="authorName" required>
+            </div>
+            <div class="form-group">
+                <label for="editIndustry">Industry:</label>
+                <input type="text" id="editIndustry" name="industry">
+            </div>
+            <div class="form-group">
+                <label for="editImage">New Image (optional):</label>
+                <input type="file" id="editImage" name="image" accept="image/*">
+            </div>
+            <div class="current-image">
+                <p>Current Image:</p>
+                <img id="currentBlogImage" src="" alt="Current Blog Image">
+            </div>
+            <button type="submit">Update Blog</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('btn', 'btn-dark', 'd-md-none');
+        toggleBtn.innerHTML = '☰';
+        toggleBtn.style.position = 'fixed';
+        toggleBtn.style.top = '10px';
+        toggleBtn.style.left = '10px';
+        toggleBtn.style.zIndex = '1000';
+        
+        document.body.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    });
+
+    // Modal functions
+    function openAddModal() {
+        document.getElementById('addBlogModal').style.display = 'block';
+    }
+
+    function closeAddModal() {
+        document.getElementById('addBlogModal').style.display = 'none';
+    }
+
+    function openEditModal() {
+        document.getElementById('editBlogModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editBlogModal').style.display = 'none';
+    }
+
+    // Blog CRUD Operations
+    async function addBlog(formData) {
+        try {
+            const response = await fetch('/create-blogs', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding blog');
+        }
+    }
+
+    async function editBlog(id, title, description, image, authorName, industry, listed) {
+        document.getElementById('editBlogId').value = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editDescription').value = description;
+        document.getElementById('editAuthorName').value = authorName;
+        document.getElementById('editIndustry').value = industry;
+        document.getElementById('currentBlogImage').src = image;
+        openEditModal();
+    }
+
+    async function updateBlog(id, formData) {
+        try {
+            const response = await fetch(`/edit-blogs/${id}`, {
+                method: 'PUT',
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating blog');
+        }
+    }
+
+    async function deleteBlog(id) {
+        if (confirm('Are you sure you want to delete this blog?')) {
+            try {
+                const response = await fetch(`/delete-blogs/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting blog');
+            }
+        }
+    }
+
+    async function toggleBlogListing(id) {
+        try {
+            const response = await fetch(`/toggle-listing-blogs/${id}`, {
+                method: 'PATCH'
+            });
+            const data = await response.json();
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error toggling blog listing status');
+        }
+    }
+
+    // Form Submissions
+    document.getElementById('addBlogForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        await addBlog(formData);
+    });
+
+    document.getElementById('editBlogForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editBlogId').value;
+        const formData = new FormData(e.target);
+        await updateBlog(id, formData);
+    });
+</script>
+</body>
+</html>
