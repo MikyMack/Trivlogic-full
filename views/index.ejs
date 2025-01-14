@@ -647,44 +647,102 @@
     <!-- ========== Awarded ========== -->
 
     <!-- projects -->
+    <div class="container">
+      <div class="section-title mt-65 d-flex">
+        <div class="sub-section-title">
+          <p class="description d-inline-block p-relative square-before mb-10">
+           Projects
+          </p>
+          <h2 class="title-h2 body-font title-block-lg d-block heading-color">
+            Check Our <b> Completed Projects</b>
+          </h2>
+        </div>
+      </div>
+     </div>
+    
+    <div class="v-dark-head-mobile half-left dsn-section-padding dsn-header-animation">
+    
+      <div class="main-slider v-dark-head-mobile has-horizontal active-nav-slider dsn-webgl has-paginate"
+           data-dsn-webgl='{"displacement" : "/img/displacement/9.jpg"}'
+           data-dsn-option='{"direction":"vertical","allowTouchMove":true,"watchSlidesProgress":true,"grabCursor":true,"mousewheel":false}'>
 
-
-    <section class="proj-main">
-      <ul class='slider'>
-        <% if (projects && projects.length> 0) { %>
-          <% projects.forEach(function(project) { %>
-            <li class='item' style="background-image: url('<%= project.image %>')">
-              <div class='content-pr'>
-                <h2 class='title'>
-                  <% if (project.liveLink) { %><a href="<%= project.liveLink %>" target="_blank">
-                      <%= project.title %>
-                    </a>
-                    <% } else { %>
-                      <%= project.title %>
-                        <% } %>
-                </h2>
-                <p class='description'>
-                  <%= project.description %>
-                </p>
-                <button><a href="/projects">More Projects</a></button>
-              </div>
-            </li>
-            <% }); %>
-              <% } else { %>
-                <li class='item' style="background-image: url('/images/projectspage/project-1.jpg')">
-                  <div class='content-pr'>
-                    <h2 class='title'>No Projects Found</h2>
-                    <p class='description'>Please check back later for new projects</p>
-                    <button><a href="/projects">More Projects</a></button>
+          <div class="content-slider slide-inner h-100 over-hidden">
+              <div class="bg-container p-absolute dsn-hero-parallax-img w-100 h-100 z-index-1 dsn-hero-parallax-img">
+              
+                  <div class="swiper-container h-100">
+                      <div class="swiper-wrapper">
+                          <% if (projects && projects.length > 0) { %>
+                            <% projects.forEach(function(project) { %>
+                              <div class="slide-item swiper-slide over-hidden">
+                                  <div class="image-bg cover-bg w-100 h-100 before-z-index" data-overlay="4">
+                                      <img class="cover-bg-img dsn-swiper-parallax-transform"
+                                           src="<%= project.image %>" alt=""
+                                           data-dsn-position="50% 50%"/>
+                                  </div>
+                                  <div class="slide-content p-absolute">
+                                      <h2 class="title has-box-mod p-relative">
+                                          <a href="/projects/<%= project._id %>" data-dsn-split="chars" class="effect-ajax text-upper"
+                                             data-dsn-ajax="slider">
+                                             <%= project.title %>
+                                          </a>
+                                      </h2>
+                                      <p class="description swiper-animate-head max-w570 mt-20">
+                                          <%= project.description %>
+                                      </p>
+                                      <div class="d-flex mt-20 dsn-def-btn dsn-border-style">
+                                          <a class="mr-15 dsn-btn dsn-border border-color-default background-main has-icon-left"
+                                             href="<%= project.liveLink %>"
+                                             data-dsn-ajax="slider" data-dsn="parallax">
+                                              <span class="dsn-icon dsn-bg-before btn-icon-left heading-color z-index-1">
+                                                  <i class="fas fa-angle-right"></i>
+                                              </span>
+                                              <span class="title-btn p-relative z-index-1 heading-color">
+                                                Live Now
+                                              </span>
+                                          </a>
+                                      </div>
+                                  </div>
+                              </div>
+                            <% }); %>
+                          <% } else { %>
+                              <div class="slide-item swiper-slide over-hidden">
+                                  <div class="image-bg cover-bg w-100 h-100 before-z-index" data-overlay="4">
+                                      <img class="cover-bg-img dsn-swiper-parallax-transform"
+                                           src="/images/projectspage/project-1.jpg" alt=""
+                                           data-dsn-position="50% 50%"/>
+                                  </div>
+                                  <div class="slide-content p-absolute">
+                                      <h2 class="title has-box-mod p-relative">
+                                          <a href="#" data-dsn-split="chars" class="effect-ajax text-upper">
+                                              No Projects Found
+                                          </a>
+                                      </h2>
+                                      <p class="description swiper-animate-head max-w570 mt-20">
+                                          Please check back later for new projects
+                                      </p>
+                                  </div>
+                              </div>
+                          <% } %>
+                      </div>
                   </div>
-                </li>
-                <% } %>
-      </ul>
-      <nav class='nav'>
-        <button class='btn prev'>Prev</button>
-        <button class='btn next'>Next</button>
-      </nav>
-    </section>
+              </div>
+              <div class="dsn-container d-flex align-items-center dsn-slider-content dsn-hero-parallax-title"></div>
+          </div>
+
+          <div class="control-nav w-100 d-flex dsn-container align-items-center justify-content-between">
+              <div class="prev-paginate dsn-paginate-arrow box-shadow"></div>
+
+              <div class="dsn-pagination p-relative d-flex align-items-end">
+                  <span class="slider-current-index h2">01</span>
+                  <span class="sm-title-block">/ </span>
+                  <span class="total sm-title-block"><%= projects ? projects.length : 1 %></span>
+              </div>
+
+              <div class="next-paginate dsn-paginate-arrow box-shadow"></div>
+          </div>
+
+      </div>
+    </div>
     <div class="d-flex justify-content-center mt-50">
       <div class="dsn-icon-heading-color dsn-def-btn d-flex justify-content-start mt-30">
         <a class="dsn-btn dsn-border border-color-default background-main effect-ajax has-icon-left" href="/projects"

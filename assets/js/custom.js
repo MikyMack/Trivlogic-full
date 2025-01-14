@@ -1267,18 +1267,18 @@ const dsnParam = {
           const handleNext = function () {
               if (tl.isActive()) return;
   
-              if (swiper.slides.length === swiper.activeIndex + 1 && !swiper.passedParams.loop) {
+              if (swiper && swiper.slides && swiper.slides.length === swiper.activeIndex + 1 && !swiper.passedParams.loop) {
                   swiper.slideTo(0); // If the last slide, go back to the first slide
-              } else {
+              } else if (swiper) {
                   swiper.slideNext(); // Go to the next slide
               }
           },
           handlePrev = function () {
               if (tl.isActive()) return;
   
-              if (swiper.activeIndex === 0 && !swiper.passedParams.loop) {
-                  swiper.slideTo(swiper.slides.length); 
-              } else {
+              if (swiper && swiper.activeIndex === 0 && !swiper.passedParams.loop) {
+                  swiper.slideTo(swiper.slides.length - 1); 
+              } else if (swiper) {
                   swiper.slidePrev(); 
               }
           },
@@ -1312,18 +1312,23 @@ const dsnParam = {
               });
           }
   
-          // Automatically move to the next slide every 2 seconds
-          setInterval(() => {
-              handleNext();  
+          // Automatically move to the next slide every 3.5 seconds
+          const autoplayInterval = setInterval(() => {
+              if (swiper && !swiper.destroyed) {
+                  handleNext();
+              } else {
+                  clearInterval(autoplayInterval);
+              }
           }, 3500);  
   
         
           dsnGrid.killAjax(function () {
+              clearInterval(autoplayInterval);
               if (nextArrow.length) nextArrow.off('click', handleNext);
               if (prevArrow.length) prevArrow.off('click', handlePrev);
-              tl.kill();
-              swiper.destroy();
-              webGel.destroy();
+              if (tl) tl.kill();
+              if (swiper && !swiper.destroyed) swiper.destroy();
+              if (webGel) webGel.destroy();
               if (nav) nav.destroy();
               if (navPrev) navPrev.destroy();
           });
