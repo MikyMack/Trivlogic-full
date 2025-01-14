@@ -168,13 +168,9 @@
                             <p class="links over-hidden mb-1">
                                 <a class="link-hover d-block" href="tel:+918848609311"
                                     data-hover-text="+91 8848609311">+918848609311</a>
-                                <a class="link-hover" href="tel:
-                +918123010000" data-hover-text="
-                +91 8123010000">
+                                <a class="link-hover" href="tel:+918123010000" data-hover-text="+91 8123010000">
                                     +91 8123010000</a>
-                                <a class="link-hover d-block" href="tel:
-              +447771868301" data-hover-text="
-              +44 7771868301">
+                                <a class="link-hover d-block" href="tel:+447771868301" data-hover-text="+44 7771868301">
                                     +44 7771868301
                                 </a>
                             </p>
@@ -286,39 +282,39 @@
                         </h2>
                         <p class="mt-10">Fill out the fields to get an instant estimate for your solution!</p>
                         <div class="dsn-form mt-20 form-box d-flex flex-column">
-                            <form id="contact-form" class="form w-100" method="post" action="#" data-toggle="validator">
+                            <form id="contact-form" class="form w-100" onsubmit="sendToWhatsApp(event)">
                                 <div class="messages"></div>
                                 <div class="input__wrap controls">
                                     <div class="d-grid grid-md-2" data-dsn-gap="0px 30px">
                                         <div class="form-group dsn-up">
                                             <div class="entry-box">
-
                                                 <input id="form_name" type="text" name="name"
-                                                    placeholder="Type your name" required="required"
-                                                    data-error="name is required." />
+                                                    placeholder="Type your name" required="required"/>
                                             </div>
-                                            <div class="help-block with-errors"></div>
                                         </div>
                                         <div class="form-group dsn-up">
                                             <div class="entry-box">
-
                                                 <input id="form_email" type="email" name="email"
-                                                    placeholder="Type your Email Address" required="required"
-                                                    data-error="Valid email is required." />
+                                                    placeholder="Type your Email Address" required="required"/>
                                             </div>
-                                            <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
 
+                                    <div class="form-group dsn-up">
+                                        <div class="entry-box">
+                                            <select id="office_location" name="office" required class="form-control">
+                                                <option value="">Select Office Location</option>
+                                                <option value="india">India Office</option>
+                                                <option value="uk">UK Office</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <div class="form-group dsn-up">
                                         <div class="entry-box">
-
                                             <textarea id="form_message" class="form-control" name="message" rows="7"
-                                                placeholder="Let us know how we can help you!" required="required"
-                                                data-error="Please,leave us a message."></textarea>
+                                                placeholder="Let us know how we can help you!" required="required"></textarea>
                                         </div>
-                                        <div class="help-block with-errors"></div>
                                     </div>
 
                                     <div class="d-flex dsn-up">
@@ -329,6 +325,8 @@
                                     </div>
                                 </div>
                             </form>
+
+                          
                         </div>
                     </div>
                     <div class="box-info1 p-30  ">
@@ -511,13 +509,9 @@
                                 </h4>
 
                                 <div class="col-contact">
-                                    <p><strong>TE</strong> <a href="tel:+918848609311
-                    "> :+91 8848609311 </a></p>
-                                    <p class="mt-10"><strong>PH</strong> <a href="tel:+918123010000"> :+91
-                                            8123010000</a></p>
-                                    <p class="mt-10"><strong>UK</strong> <a href="tel:+447771868301
-
-                    "> :+44 7771868301
+                                    <p><strong>TE</strong> <a href="tel:+918848609311"> :+91 8848609311 </a></p>
+                                    <p class="mt-10"><strong>PH</strong> <a href="tel:+918123010000"> :+91 8123010000</a></p>
+                                    <p class="mt-10"><strong>UK</strong> <a href="tel:+447771868301 "> :+44 7771868301
                                         </a></p>
                                     <p class="over-hidden mt-10">
                                         <strong>EM</strong> :
@@ -656,41 +650,33 @@
     <!-- ========== End Social ========== -->
 
     <!-- ========== Style Option Page ========== -->
-    <div id="dsn_box_options" class="day-night">
-        <div class="night active" data-dsn-theme="dark">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-                <rect x="12.3" y="23.5" width="2.6" height="1"></rect>
-                <rect x="16.1" y="15.3" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -6.8871 16.5732)" width="1"
-                    height="2.6"></rect>
-                <rect x="23.5" y="12.3" width="1" height="2.6"></rect>
-                <rect x="30.1" y="16.1" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -2.5145 27.0538)" width="2.6"
-                    height="1"></rect>
-                <rect x="33.1" y="23.5" width="2.6" height="1"></rect>
-                <rect x="30.9" y="30.1" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -12.9952 31.4264)" width="1"
-                    height="2.6"></rect>
-                <rect x="23.5" y="33.1" width="1" height="2.6"></rect>
-                <rect x="15.3" y="30.9" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -17.3677 20.9457)" width="2.6"
-                    height="1"></rect>
-                <path
-                    d="M24,18.7c-2.9,0-5.3,2.4-5.3,5.3s2.4,5.3,5.3,5.3s5.3-2.4,5.3-5.3S26.9,18.7,24,18.7z M24,28.3c-2.4,0-4.3-1.9-4.3-4.3s1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3S26.4,28.3,24,28.3z">
-                </path>
-            </svg>
-
-        </div>
-        <div class="moon" data-dsn-theme="night">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-                <path
-                    d="M24,33.9c-5.4,0-9.9-4.4-9.9-9.9c0-4.3,2.7-8,6.8-9.4l0.8-0.3l-0.1,0.9c-0.2,0.6-0.2,1.3-0.2,1.9c0,5.2,4.3,9.5,9.5,9.5c0.6,0,1.3-0.1,1.9-0.2l0.8-0.2L33.3,27C32,31.1,28.3,33.9,24,33.9z M20.4,15.9c-3.2,1.4-5.3,4.5-5.3,8.1c0,4.9,4,8.9,8.9,8.9c3.6,0,6.7-2.1,8.1-5.3c-0.4,0-0.8,0.1-1.3,0.1c-5.8,0-10.5-4.7-10.5-10.5C20.4,16.7,20.4,16.3,20.4,15.9z">
-                </path>
-            </svg>
-        </div>
-    </div>
+ 
     <!-- ========== End Style Option Page ========== -->
 
     <!-- ========== Line BG ========== -->
     <div id="line_head"><span class="container"></span></div>
     <!-- ========== End Line BG ========== -->
+    <script>
+        function sendToWhatsApp(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('form_name').value;
+            const email = document.getElementById('form_email').value;
+            const message = document.getElementById('form_message').value;
+            const office = document.getElementById('office_location').value;
 
+            let whatsappNumber;
+            if(office === 'india') {
+                whatsappNumber = '918123010000';
+            } else if(office === 'uk') {
+                whatsappNumber = '447771868301';
+            }
+
+            const whatsappMessage = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`);
+        }
+        </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
         integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>

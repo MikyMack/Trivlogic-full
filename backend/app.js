@@ -60,9 +60,13 @@ app.get('/', async (req, res) => {
 app.get('/about', async (req, res) => {
     try {
         const logos = await Logo.find({ listed: true });
+        const testimonials = await Testimonial.find({ listed: true });
+        const clients = await Client.find({ listed: true });
         res.render('about', {
             title: 'about page',
-            Logo: logos
+            Logo: logos,
+            testimonials: testimonials,
+            clients: clients
         });
     } catch (err) {
         console.error('Error rendering about us page:', err.message);
@@ -148,9 +152,11 @@ app.get('/projects/:id', async (req, res) => {
 app.get('/services', async (req, res) => {
     try {
         const logos = await Logo.find({ listed: true });
+        const testimonials = await Testimonial.find({ listed: true });
         res.render('services', {
             title: 'service page',
-            Logo: logos
+            Logo: logos,
+            testimonials: testimonials,
         });
     } catch (err) {
         console.error('Error rendering services page:', err.message);
@@ -169,6 +175,48 @@ app.get('/web-development', async (req, res) => {
     } catch (err) {
         console.error('Error rendering web-development page:', err.message);
         res.status(500).send('Error loading the services page');
+    }
+});
+app.get('/digital-marketing', async (req, res) => {
+    try {
+        const logos = await Logo.find({ listed: true });
+        const testimonials = await Testimonial.find({ listed: true });
+        res.render('digital-marketing', {
+            title: 'digital-marketing page',
+            Logo: logos,
+            testimonials: testimonials,
+        });
+    } catch (err) {
+        console.error('Error rendering digital-marketing page:', err.message);
+        res.status(500).send('Error loading the services page');
+    }
+});
+app.get('/software-development', async (req, res) => {
+    try {
+        const logos = await Logo.find({ listed: true });
+        const testimonials = await Testimonial.find({ listed: true });
+        res.render('software-development', {
+            title: 'software-development page',
+            Logo: logos,
+            testimonials: testimonials,
+        });
+    } catch (err) {
+        console.error('Error rendering software-development page:', err.message);
+        res.status(500).send('Error loading the services page');
+    }
+});
+app.get('/branding', async (req, res) => {
+    try {
+        const logos = await Logo.find({ listed: true });
+        const testimonials = await Testimonial.find({ listed: true });
+        res.render('branding', {
+            title: 'branding page',
+            Logo: logos,
+            testimonials: testimonials,
+        });
+    } catch (err) {
+        console.error('Error rendering branding page:', err.message);
+        res.status(500).send('Error loading the branding page');
     }
 });
 

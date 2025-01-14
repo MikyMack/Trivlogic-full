@@ -83,7 +83,7 @@
                         <p>Industry: <%= blog.industry %></p>
                         <p>Date: <%= new Date(blog.date).toLocaleDateString() %></p>
                         <div class="blog-actions">
-                            <button onclick="editBlog('<%= blog._id %>', '<%= blog.title %>', '<%= blog.description %>', '<%= blog.image %>', '<%= blog.authorName %>', '<%= blog.industry %>', <%= blog.listed %>)">
+                            <button onclick="editBlog('<%= blog._id %>', '<%= blog.title %>', '<%= blog.description %>', '<%= blog.image %>', '<%= blog.authorName %>', '<%= blog.industry %>', '<%= blog.date %>', <%= blog.listed %>)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button onclick="deleteBlog('<%= blog._id %>')">
@@ -155,6 +155,10 @@
                 <input type="text" id="editIndustry" name="industry">
             </div>
             <div class="form-group">
+                <label for="editDate">Date:</label>
+                <input type="date" id="editDate" name="date" required>
+            </div>
+            <div class="form-group">
                 <label for="editImage">New Image (optional):</label>
                 <input type="file" id="editImage" name="image" accept="image/*">
             </div>
@@ -223,12 +227,13 @@
         }
     }
 
-    async function editBlog(id, title, description, image, authorName, industry, listed) {
+    async function editBlog(id, title, description, image, authorName, industry, date, listed) {
         document.getElementById('editBlogId').value = id;
         document.getElementById('editTitle').value = title;
         document.getElementById('editDescription').value = description;
         document.getElementById('editAuthorName').value = authorName;
         document.getElementById('editIndustry').value = industry;
+        document.getElementById('editDate').value = new Date(date).toISOString().split('T')[0];
         document.getElementById('currentBlogImage').src = image;
         openEditModal();
     }
