@@ -325,8 +325,29 @@
                                     </div>
                                 </div>
                             </form>
-
-                          
+                            <script>
+                                function sendToWhatsApp(e) {
+                                    e.preventDefault();
+                                    
+                                    const name = encodeURIComponent(document.getElementById('form_name').value);
+                                    const email = encodeURIComponent(document.getElementById('form_email').value);
+                                    const message = encodeURIComponent(document.getElementById('form_message').value);
+                                    const office = document.getElementById('office_location').value;
+                        
+                                    let whatsappNumber;
+                                    if(office === 'india') {
+                                        whatsappNumber = '918123010000';
+                                    } else if(office === 'uk') {
+                                        whatsappNumber = '447771868301';
+                                    }
+                        
+                                    const whatsappMessage = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
+                                    
+                                    const whatsappURL = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${whatsappMessage}`;
+                                    window.location.href = whatsappURL;
+                                    return false;
+                                }
+                            </script>
                         </div>
                     </div>
                     <div class="box-info1 p-30  ">
@@ -656,27 +677,6 @@
     <!-- ========== Line BG ========== -->
     <div id="line_head"><span class="container"></span></div>
     <!-- ========== End Line BG ========== -->
-    <script>
-        function sendToWhatsApp(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('form_name').value;
-            const email = document.getElementById('form_email').value;
-            const message = document.getElementById('form_message').value;
-            const office = document.getElementById('office_location').value;
-
-            let whatsappNumber;
-            if(office === 'india') {
-                whatsappNumber = '918123010000';
-            } else if(office === 'uk') {
-                whatsappNumber = '447771868301';
-            }
-
-            const whatsappMessage = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
-            
-            window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`);
-        }
-        </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
         integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
